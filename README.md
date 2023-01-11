@@ -129,3 +129,10 @@ reside in the `types/` folder.
 ### More Example
 
 for more examples, follow `examples/` folder
+
+### Sync tags with original repo
+
+```sh
+git fetch --tags upstream
+git push --tags
+```
