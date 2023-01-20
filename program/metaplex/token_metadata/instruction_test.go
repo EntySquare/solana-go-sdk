@@ -256,8 +256,8 @@ func TestUpdateMetadataAccount(t *testing.T) {
 							},
 						},
 					},
-					NewUpdateAuthority:  pointer.Get[common.PublicKey](common.PublicKeyFromString("newMintAuthority111111111111111111111111111")),
-					PrimarySaleHappened: pointer.Get[bool](true),
+					NewUpdateAuthority:  pointer.Get(common.PublicKeyFromString("newMintAuthority111111111111111111111111111")),
+					PrimarySaleHappened: pointer.Get(true),
 				},
 			},
 			want: types.Instruction{
