@@ -143,3 +143,14 @@ type MasterEditionV2 struct {
 	Supply    uint64
 	MaxSupply *uint64
 }
+
+type UseAuthorityRecord struct {
+	Key         Key
+	AllowedUses uint64
+	Bump        *uint8
+}
+
+type CollectionAuthorityRecord struct {
+	Key  Key
+	Bump *uint8
+}
