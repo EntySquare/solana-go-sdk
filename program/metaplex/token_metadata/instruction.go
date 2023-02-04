@@ -561,12 +561,12 @@ func CreateMasterEditionV3(param CreateMasterEditionParam) types.Instruction {
 }
 
 type BurnNftParam struct {
-	Metadata             common.PublicKey // Metadata (pda of ['metadata', program id, mint id])
-	Owner                common.PublicKey // NFT owner
-	Mint                 common.PublicKey // Mint of the NFT
-	TokenAccount         common.PublicKey // Token account to close
-	MasterEditionAccount common.PublicKey // MasterEdition2 of the NFT
-	CollectionMetadata   common.PublicKey // Metadata of the Collection
+	Metadata             common.PublicKey  // Metadata (pda of ['metadata', program id, mint id])
+	Owner                common.PublicKey  // NFT owner
+	Mint                 common.PublicKey  // Mint of the NFT
+	TokenAccount         common.PublicKey  // Token account to close
+	MasterEditionAccount common.PublicKey  // MasterEdition2 of the NFT
+	CollectionMetadata   *common.PublicKey // Metadata of the Collection
 }
 
 func BurnNft(param BurnNftParam) types.Instruction {
@@ -578,46 +578,52 @@ func BurnNft(param BurnNftParam) types.Instruction {
 	if err != nil {
 		panic(err)
 	}
+
+	accounts := []types.AccountMeta{
+		{
+			PubKey:     param.Metadata,
+			IsSigner:   false,
+			IsWritable: true,
+		},
+		{
+			PubKey:     param.Owner,
+			IsSigner:   true,
+			IsWritable: true,
+		},
+		{
+			PubKey:     param.Mint,
+			IsSigner:   false,
+			IsWritable: true,
+		},
+		{
+			PubKey:     param.TokenAccount,
+			IsSigner:   false,
+			IsWritable: true,
+		},
+		{
+			PubKey:     param.MasterEditionAccount,
+			IsSigner:   false,
+			IsWritable: true,
+		},
+		{
+			PubKey:     common.TokenProgramID,
+			IsSigner:   false,
+			IsWritable: false,
+		},
+	}
+
+	if param.CollectionMetadata != nil && *param.CollectionMetadata != (common.PublicKey{}) {
+		accounts = append(accounts, types.AccountMeta{
+			PubKey:     *param.CollectionMetadata,
+			IsSigner:   false,
+			IsWritable: true,
+		})
+	}
+
 	return types.Instruction{
 		ProgramID: common.MetaplexTokenMetaProgramID,
-		Accounts: []types.AccountMeta{
-			{
-				PubKey:     param.Metadata,
-				IsSigner:   false,
-				IsWritable: true,
-			},
-			{
-				PubKey:     param.Owner,
-				IsSigner:   true,
-				IsWritable: true,
-			},
-			{
-				PubKey:     param.Mint,
-				IsSigner:   false,
-				IsWritable: true,
-			},
-			{
-				PubKey:     param.TokenAccount,
-				IsSigner:   false,
-				IsWritable: true,
-			},
-			{
-				PubKey:     param.MasterEditionAccount,
-				IsSigner:   false,
-				IsWritable: true,
-			},
-			{
-				PubKey:     common.TokenProgramID,
-				IsSigner:   false,
-				IsWritable: false,
-			},
-			{
-				PubKey:     param.CollectionMetadata,
-				IsSigner:   false,
-				IsWritable: true,
-			},
-		},
-		Data: data,
+		Accounts:  accounts,
+		Data:      data,
 	}
 }
 
