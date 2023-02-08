@@ -496,31 +496,29 @@ type CreateMetadataAccountV3Param struct {
 	UpdateAuthorityIsSigner bool
 	IsMutable               bool
 	Data                    DataV2
-	CollectionDetails       *CollectionDetails // (Optional) This optional enum allows us to differentiate Collection NFTs from Regular NFTs whilst adding additional context such as the amount of NFTs that are linked to the Collection NFT.
-	CollectionSize          *uint64            // (Optional) This optional field allows us to specify the amount of NFTs that are linked to the Collection NFT.
+	CollectionSize          *uint64 // (Optional) This optional field allows us to specify the amount of NFTs that are linked to the Collection NFT.
 }
 
 // CreateMetadataAccountV3 instruction creates and initializes a new Metadata account
 // for a given Mint account. It is required that the Mint account has been created and
 // initialized by the Token Program before executing this instruction.
 func CreateMetadataAccountV3(param CreateMetadataAccountV3Param) types.Instruction {
-	// If CollectionSize is set, but CollectionDetails is not, then we set CollectionDetails to a default value.
-	if param.CollectionDetails == nil && param.CollectionSize != nil {
-		param.CollectionDetails = &CollectionDetails{
-			V1: CollectionDetailsV1{Size: *param.CollectionSize},
-		}
+	// Set the collection details if the collection size is set
+	var callectionDetails *CollectionDetailsV1
+	if param.CollectionSize != nil {
+		callectionDetails = &CollectionDetailsV1{Size: *param.CollectionSize}
 	}
 
 	data, err := borsh.Serialize(struct {
 		Instruction       Instruction
 		Data              DataV2
 		IsMutable         bool
-		CollectionDetails *CollectionDetails
+		CollectionDetails *CollectionDetailsV1
 	}{
 		Instruction:       InstructionCreateMetadataAccountV3,
 		Data:              param.Data,
 		IsMutable:         param.IsMutable,
-		CollectionDetails: param.CollectionDetails,
+		CollectionDetails: callectionDetails,
 	})
 	if err != nil {
 		panic(err)
