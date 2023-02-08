@@ -23,6 +23,9 @@ const (
 	KeyEditionMarker
 	KeyUseAuthorityRecord
 	KeyCollectionAuthorityRecord
+	KeyUnknown          // FIXME: could not find this in the metaplex docs
+	KeyTokenRecord      // 11
+	KeyMetadataDelegate // 12
 )
 
 type Creator struct {
@@ -154,4 +157,64 @@ type UseAuthorityRecord struct {
 type CollectionAuthorityRecord struct {
 	Key  Key
 	Bump *uint8
+}
+
+type TokenState borsh.Enum
+
+const (
+	TokenStateUninitialized TokenState = iota
+	TokenStateOwnerTransfer
+	TokenStateDelegateTransfer
+	TokenStateOwnerBurn
+	TokenStateDelegateBurn
+	TokenStateOwnerRevoke
+	TokenStateOwnerApprove
+	TokenStateOwnerUnlock
+	TokenStateDelegateUnlock
+	TokenStateOwnerLock
+	TokenStateDelegateLock
+	TokenStateMint
+)
+
+// TokenDelegateRole represents the different delegates types. There are six different values and instrution are restricted depending on the token delegate role and token state values.
+type TokenDelegateRole borsh.Enum
+
+const (
+	TokenDelegateRoleNone TokenDelegateRole = iota
+	TokenDelegateRoleSale
+	TokenDelegateRoleTransfer
+	TokenDelegateRoleLockedTransfer
+	TokenDelegateRoleUtility
+	TokenDelegateRoleStaking
+	TokenDelegateRoleMigration
+	TokenDelegateRoleStandard
+)
+
+// https://github.com/metaplex-foundation/metaplex-program-library/blob/master/token-metadata/program/ProgrammableNFTGuide.md#token-delegate
+type TokenRecord struct {
+	Key               Key
+	Bump              uint8
+	State             TokenState
+	rule_set_revision *uint8
+	delegate          *common.PublicKey
+	delegate_role     *TokenDelegateRole
+	locked_transfer   *common.PublicKey
+}
+
+// MetadataDelegates are delegates that operate at the metadata level.
+// https://github.com/metaplex-foundation/metaplex-program-library/blob/master/token-metadata/program/ProgrammableNFTGuide.md#metadata-delegates
+type MetadataDelegate borsh.Enum
+
+const (
+	MetadataDelegateCollection MetadataDelegate = iota
+	MetadataDelegateUse
+	MetadataDelegateUpdate
+)
+
+type MetadataDelegateRecord struct {
+	Key             Key
+	Bump            uint8
+	Mint            common.PublicKey
+	Delegate        common.PublicKey
+	UpdateAuthority common.PublicKey
 }

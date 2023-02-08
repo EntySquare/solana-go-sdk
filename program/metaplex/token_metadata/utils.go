@@ -72,6 +72,37 @@ func GetEditionMark(mint common.PublicKey, edition uint64) (common.PublicKey, er
 	return pubkey, err
 }
 
+// Token Record accounts are used by Programmable NFTs only. Since Programmable NFTs add another layer on top of tokens, Token Record accounts enable us to attach custom data to token accounts rather than mint accounts.
+func GetTokenRecord(mint, tokenAccount common.PublicKey) (common.PublicKey, error) {
+	pubkey, _, err := common.FindProgramAddress(
+		[][]byte{
+			[]byte("metadata"),
+			common.MetaplexTokenMetaProgramID.Bytes(),
+			mint.Bytes(),
+			[]byte("token_record"),
+			tokenAccount.Bytes(),
+		},
+		common.MetaplexTokenMetaProgramID,
+	)
+	return pubkey, err
+}
+
+// Metadata Delegate Record accounts are used to store multiple delegate authorities for a given Metadata account.
+func GetMetadataDelegateRecord(mint, updateAuthority, delegate common.PublicKey, delegateRole MetadataDelegate) (common.PublicKey, error) {
+	pubkey, _, err := common.FindProgramAddress(
+		[][]byte{
+			[]byte("metadata"),
+			common.MetaplexTokenMetaProgramID.Bytes(),
+			mint.Bytes(),
+			uint8ToBytes(uint8(delegateRole)),
+			updateAuthority.Bytes(),
+			delegate.Bytes(),
+		},
+		common.MetaplexTokenMetaProgramID,
+	)
+	return pubkey, err
+}
+
 // Collection Authority Record accounts are used internally by the program to keep track of which authorities are allowed to set and/or verify the collection of the token's Metadata account.
 func GetCollectionAuthorityRecord(mint, authotity common.PublicKey) (common.PublicKey, error) {
 	pubkey, _, err := common.FindProgramAddress(
@@ -100,4 +131,11 @@ func GetUseAuthorityRecord(mint, authotity common.PublicKey) (common.PublicKey, 
 		common.MetaplexTokenMetaProgramID,
 	)
 	return pubkey, err
+}
+
+// Convert uint8 to bytes
+func uint8ToBytes(u uint8) []byte {
+	b := make([]byte, 8)
+	b[0] = byte(u)
+	return b
 }
