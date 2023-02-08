@@ -486,6 +486,81 @@ func CreateMetadataAccountV2(param CreateMetadataAccountV2Param) types.Instructi
 	}
 }
 
+// CreateMetadataAccountV3Param is the parameter for CreateMetadataAccountV3
+type CreateMetadataAccountV3Param struct {
+	Metadata                common.PublicKey
+	Mint                    common.PublicKey
+	MintAuthority           common.PublicKey
+	Payer                   common.PublicKey
+	UpdateAuthority         common.PublicKey
+	UpdateAuthorityIsSigner bool
+	IsMutable               bool
+	Data                    DataV2
+	CollectionDetails       CollectionDetails // (Optional) This optional enum allows us to differentiate Collection NFTs from Regular NFTs whilst adding additional context such as the amount of NFTs that are linked to the Collection NFT.
+}
+
+// CreateMetadataAccountV3 instruction creates and initializes a new Metadata account
+// for a given Mint account. It is required that the Mint account has been created and
+// initialized by the Token Program before executing this instruction.
+func CreateMetadataAccountV3(param CreateMetadataAccountV3Param) types.Instruction {
+	data, err := borsh.Serialize(struct {
+		Instruction       Instruction
+		Data              DataV2
+		IsMutable         bool
+		CollectionDetails CollectionDetails
+	}{
+		Instruction:       InstructionCreateMetadataAccountV3,
+		Data:              param.Data,
+		IsMutable:         param.IsMutable,
+		CollectionDetails: param.CollectionDetails,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	return types.Instruction{
+		ProgramID: common.MetaplexTokenMetaProgramID,
+		Accounts: []types.AccountMeta{
+			{
+				PubKey:     param.Metadata,
+				IsSigner:   false,
+				IsWritable: true,
+			},
+			{
+				PubKey:     param.Mint,
+				IsSigner:   false,
+				IsWritable: false,
+			},
+			{
+				PubKey:     param.MintAuthority,
+				IsSigner:   true,
+				IsWritable: false,
+			},
+			{
+				PubKey:     param.Payer,
+				IsSigner:   true,
+				IsWritable: true,
+			},
+			{
+				PubKey:     param.UpdateAuthority,
+				IsSigner:   param.UpdateAuthorityIsSigner,
+				IsWritable: false,
+			},
+			{
+				PubKey:     common.SystemProgramID,
+				IsSigner:   false,
+				IsWritable: false,
+			},
+			{
+				PubKey:     common.SysVarRentPubkey,
+				IsSigner:   false,
+				IsWritable: false,
+			},
+		},
+		Data: data,
+	}
+}
+
 type CreateMasterEditionV3Param struct {
 	Edition         common.PublicKey
 	Mint            common.PublicKey
