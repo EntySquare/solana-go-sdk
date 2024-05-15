@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/portto/solana-go-sdk/internal/client_test"
-	"github.com/portto/solana-go-sdk/rpc"
+	"github.com/EntySquare/solana-go-sdk/internal/client_test"
+	"github.com/EntySquare/solana-go-sdk/rpc"
 )
 
 func TestClient_GetTransactionCount(t *testing.T) {

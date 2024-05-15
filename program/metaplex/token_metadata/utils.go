@@ -3,7 +3,7 @@ package token_metadata
 import (
 	"strconv"
 
-	"github.com/portto/solana-go-sdk/common"
+	"github.com/EntySquare/solana-go-sdk/common"
 )
 
 // The Metadata Account is responsible for storing additional data attached to tokens. As every account in the Token Metadata program, it derives from the Mint Account of the token using a PDA.

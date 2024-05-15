@@ -8,11 +8,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/portto/solana-go-sdk/common"
-	"github.com/portto/solana-go-sdk/pkg/pointer"
-	"github.com/portto/solana-go-sdk/program/system"
-	"github.com/portto/solana-go-sdk/rpc"
-	"github.com/portto/solana-go-sdk/types"
+	"github.com/EntySquare/solana-go-sdk/common"
+	"github.com/EntySquare/solana-go-sdk/pkg/pointer"
+	"github.com/EntySquare/solana-go-sdk/program/system"
+	"github.com/EntySquare/solana-go-sdk/rpc"
+	"github.com/EntySquare/solana-go-sdk/types"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -4,9 +4,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/portto/solana-go-sdk/common"
-	"github.com/portto/solana-go-sdk/pkg/pointer"
-	"github.com/portto/solana-go-sdk/types"
+	"github.com/EntySquare/solana-go-sdk/common"
+	"github.com/EntySquare/solana-go-sdk/pkg/pointer"
+	"github.com/EntySquare/solana-go-sdk/types"
 )
 
 func TestCreateLookupTable(t *testing.T) {
